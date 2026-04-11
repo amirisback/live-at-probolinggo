@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 
-const FILES = ['site.json', 'services.json', 'testimonials.json', 'cta.json']
+const FILES = ['site.json', 'services.json', 'testimonials.json', 'cta.json', 'footer.json']
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('site.json')
@@ -103,6 +103,7 @@ export default function AdminPage() {
               {file === 'services.json' && '🛠️ Layanan'}
               {file === 'testimonials.json' && '💬 Testimoni'}
               {file === 'cta.json' && '📞 Call to Action'}
+              {file === 'footer.json' && '🔽 Footer'}
             </button>
           ))}
         </div>

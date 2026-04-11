@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
 
-const ALLOWED_FILES = ['site.json', 'services.json', 'testimonials.json', 'cta.json']
+const ALLOWED_FILES = ['site.json', 'services.json', 'testimonials.json', 'cta.json', 'footer.json']
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
