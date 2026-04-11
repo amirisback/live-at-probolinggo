@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import ThemeProvider from "./components/ThemeProvider";
 import Navbar from "./components/Navbar";
@@ -85,7 +86,9 @@ export default function RootLayout({
     <html lang="id" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         {/* Prevent FOUC for dark mode */}
-        <script
+        <Script
+          id="theme-script"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {

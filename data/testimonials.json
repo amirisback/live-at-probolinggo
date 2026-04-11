@@ -1,9 +1,17 @@
 [
   {
+    "id": "1775914201870",
+    "name": "Muhammad Faisal Amir",
+    "role": "yayayaya",
+    "photo": "/images/testimonials/placeholder.png",
+    "content": "hehehe keren",
+    "rating": 5
+  },
+  {
     "id": "1775913828835",
     "name": "Amir",
     "role": "yayayaya",
-    "photo": "https://api.dicebear.com/7.x/initials/svg?seed=Amir",
+    "photo": "/images/testimonials/placeholder.png",
     "content": "Kereeeen",
     "rating": 5
   },

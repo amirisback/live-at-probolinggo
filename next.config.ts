@@ -10,6 +10,12 @@ const withSerwist = withSerwistInit({
 const nextConfig: NextConfig = {
   images: {
     formats: ["image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "api.dicebear.com",
+      },
+    ],
   },
 };
 
