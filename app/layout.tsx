@@ -29,6 +29,16 @@ function getSiteConfig() {
   }
 }
 
+function getFooterConfig() {
+  try {
+    const filePath = path.join(process.cwd(), "data", "footer.json");
+    const content = fs.readFileSync(filePath, "utf-8");
+    return JSON.parse(content);
+  } catch {
+    return {};
+  }
+}
+
 const site = getSiteConfig();
 
 export const metadata: Metadata = {
@@ -94,7 +104,7 @@ export default function RootLayout({
         <ThemeProvider>
           <Navbar />
           <main className="flex-1">{children}</main>
-          <Footer />
+          <Footer data={getFooterConfig()} />
         </ThemeProvider>
       </body>
     </html>
