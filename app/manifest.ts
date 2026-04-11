@@ -2,13 +2,13 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Amir App',
-    short_name: 'AmirApp',
-    description: 'Amir App Progressive Web App',
+    name: 'Live At Probolinggo',
+    short_name: 'LiveAtPBL',
+    description: 'Portal layanan warga Probolinggo — Dari Warga Untuk Warga',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
-    theme_color: '#000000',
+    background_color: '#FAFAFA',
+    theme_color: '#2563EB',
     icons: [
       {
         src: '/icon-192x192.svg',

@@ -1,0 +1,41 @@
+Bertindak sebagai pengembang frontend senior dan desainer UI/UX.
+
+Membuat situs web profil perusahaan yang menghasilkan konversi tinggi dengan prinsip UI/UX modern.
+
+Persyaratan:
+Tumpukan teknologi: Next.js + Tailwind CSS
+Sepenuhnya responsif (mobile-first)
+Pemuatan cepat dan dioptimalkan untuk SEO
+CMS berbasis File Json (Simpan = commit ke proyek)
+
+Detail persyaratan:
+- Nama Website: Live At Probolinggo
+- Tagline : Dari Warga Untuk Warga
+- Target audiens: Usia 20-35 tahun
+
+Bagian:
+- Bagian hero / Home page, berisi background video dari yutube bisa di adjust lewat json, judul website, serta tagline.
+- Data, ini berisi data penting, data di tampilkan dalam bentuk list kebawah dan di kelompokkan berdasarkan layanan (contoh : Tukang Bangunan)
+  > data pengangkut air, 
+  > data terapis pijat, 
+  > data tukang bangungan, 
+  > dan sebagainya,
+  (data berisi Nama, Nomor Ponsel, Alamat)
+- Testimoni dengan foto klien
+- Bagian CTA (pengembangan prospek)
+
+Gaya desain:
+- Modern design, profesional
+- Gunakan bayangan lembut, sudut membulat
+
+Tambahan:
+- Dukungan mode gelap dan terang, bisa di atur di UI
+- Komponen yang dapat digunakan kembali
+- Arsitektur folder yang bersih
+- Konten dummy disertakan
+
+Output:
+- Kode lengkap
+- Komponen Rincian
+- Cara menjalankan proyek
+- (Simpan CMS = komit ke proyek)
