@@ -1,0 +1,27 @@
+name: 🚀 Feature Request
+description: Usulkan fitur baru
+title: "[FEATURE] "
+labels: ["enhancement"]
+
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Ringkasan Fitur
+      placeholder: Contoh: Tambahkan dark mode
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Masalah yang Ingin Diselesaikan
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solusi yang Diinginkan
+    validations:
+      required: true
