@@ -1,5 +1,14 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+
 export default function Footer() {
+  const pathname = usePathname()
   const currentYear = new Date().getFullYear()
+
+  if (pathname?.startsWith('/admin')) {
+    return null
+  }
 
   const quickLinks = [
     { href: '#home', label: 'Beranda' },
