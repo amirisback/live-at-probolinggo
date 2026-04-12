@@ -251,13 +251,13 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-text-primary">Alamat Operasional <span className="text-red-500">*</span></label>
-                <textarea 
-                  name="address" 
-                  required 
-                  rows={3} 
+                <textarea
+                  name="address"
+                  required
+                  rows={3}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Contoh: Jl. Pahlawan Karya No. 12, Panggung, Probolinggo" 
+                  placeholder="Contoh: Jl. Pahlawan Karya No. 12, Panggung, Probolinggo"
                   className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm resize-none"
                 ></textarea>
                 <div className="flex flex-wrap gap-2 mt-2">
