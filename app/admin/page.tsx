@@ -55,6 +55,102 @@ export default function AdminPage() {
     }
   }
 
+  const downloadTemplate = () => {
+    const csvContent = "data:text/csv;charset=utf-8,Kategori,Icon,Deskripsi,Nama,WhatsApp,Alamat\nTukang Taman,🌿,Jasa merapikan taman dan potong rumput,Pak Joko,08123456789,Jl. Mawar No. 12\nTukang Taman,🌿,Jasa merapikan taman dan potong rumput,Pak Andi,08123456790,Jl. Melati No. 5"
+    const encodedUri = encodeURI(csvContent)
+    const link = document.createElement("a")
+    link.setAttribute("href", encodedUri)
+    link.setAttribute("download", "template_layanan.csv")
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+  }
+
+  const parseCSVLine = (text: string, sep: string) => {
+    let inQuotes = false;
+    let word = '';
+    let row = [];
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === sep && !inQuotes) {
+        row.push(word.trim());
+        word = '';
+      } else {
+        word += char;
+      }
+    }
+    row.push(word.trim());
+    return row;
+  }
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const text = event.target?.result as string
+      if (text) {
+        parseCSVAndMerge(text)
+      }
+    }
+    reader.readAsText(file)
+    // reset input
+    e.target.value = ''
+  }
+
+  const parseCSVAndMerge = (csvText: string) => {
+    const lines = csvText.split('\n').map(l => l.trim()).filter(l => l)
+    if (lines.length < 2) {
+      setMessage({ text: 'CSV kosong atau tidak valid', type: 'error' })
+      return
+    }
+    
+    let sep = ','
+    if (lines[0].includes(';')) sep = ';'
+    
+    const currentData = Array.isArray(data['services.json']) ? [...data['services.json']] : []
+
+    let addedCount = 0;
+
+    for (let i = 1; i < lines.length; i++) {
+      const row = parseCSVLine(lines[i], sep)
+      if (row.length < 4) continue // Invalid line
+      
+      const cat = row[0].replace(/^"|"$/g, '')
+      const icon = row[1]?.replace(/^"|"$/g, '') || '✨'
+      const desc = row[2]?.replace(/^"|"$/g, '') || 'Layanan warga'
+      const name = row[3]?.replace(/^"|"$/g, '')
+      const phone = row[4]?.replace(/^"|"$/g, '') || ''
+      const address = row[5]?.replace(/^"|"$/g, '') || 'Tidak ada alamat / tidak tahu'
+      
+      if (!cat || !name) continue 
+
+      let catIndex = currentData.findIndex(c => c.category.toLowerCase() === cat.toLowerCase())
+      if (catIndex === -1) {
+        const newId = cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+        currentData.push({
+          id: newId,
+          category: cat,
+          icon: icon,
+          description: desc,
+          contacts: []
+        })
+        catIndex = currentData.length - 1
+      }
+      
+      const exists = currentData[catIndex].contacts.find((c: any) => c.name === name && c.phone === phone)
+      if (!exists) {
+        currentData[catIndex].contacts.push({ name, phone, address })
+        addedCount++;
+      }
+    }
+
+    setData(prev => ({ ...prev, 'services.json': currentData }))
+    setMessage({ text: `Berhasil menggabungkan ${addedCount} data baru dari CSV! Periksa JSON lalu Simpan.`, type: 'success' })
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center">
@@ -110,10 +206,32 @@ export default function AdminPage() {
 
         {/* Editor Area */}
         <div className="space-y-4 animate-fade-in" key={activeTab}>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
             <p className="text-sm text-text-secondary bg-background/50 px-3 py-1.5 rounded-md border border-border inline-block">
               Mengedit file: <strong className="font-mono text-primary">{activeTab}</strong>
             </p>
+            
+            {activeTab === 'services.json' && (
+              <div className="flex flex-wrap gap-2">
+                <button
+                  title="Unduh contoh CSV agar tidak salah format"
+                  onClick={downloadTemplate}
+                  className="text-sm px-4 py-2 border border-border text-text-secondary bg-surface hover:bg-surface-hover rounded-xl flex items-center gap-2 transition-all shadow-sm"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Template CSV
+                </button>
+                <label className="text-sm px-4 py-2 bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-500 border border-green-500/20 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm font-bold">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  Import CSV Formatted
+                  <input type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />
+                </label>
+              </div>
+            )}
           </div>
           
           <JsonEditor 
