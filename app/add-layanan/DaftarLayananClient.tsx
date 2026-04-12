@@ -65,7 +65,7 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
     // If we're updating an existing category, we want to make sure the submitted variables mirror our state
     // Just in case existing fields are disabled or we want to force them. 
     // The server action just looks at formData. We'll append hidden info or let inputs handle it.
-    
+
     setErrorVisible(false)
     startTransition(async () => {
       try {
@@ -116,10 +116,10 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
               Informasi Layanan
             </h3>
             <div className="space-y-5 p-5 bg-surface/50 rounded-2xl border border-border">
-              
+
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-text-primary">Pilih Kategori Layanan <span className="text-red-500">*</span></label>
-                <select 
+                <select
                   className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm appearance-none"
                   value={selectedCategoryId}
                   onChange={(e) => setSelectedCategoryId(e.target.value)}
@@ -137,22 +137,22 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4 p-4 border border-primary-light bg-primary/5 rounded-xl">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold text-text-primary">Nama Kategori Baru <span className="text-red-500">*</span></label>
-                    <input 
-                      name="categoryName" 
-                      required={isNewCategory} 
+                    <input
+                      name="categoryName"
+                      required={isNewCategory}
                       value={categoryName}
                       onChange={(e) => setCategoryName(e.target.value)}
-                      placeholder="Contoh: Tukang Listrik" 
-                      className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" 
+                      placeholder="Contoh: Tukang Listrik"
+                      className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
                     />
                   </div>
-                  
+
                   <div className="space-y-2 relative" ref={emojiPickerRef}>
                     <label className="text-sm font-semibold text-text-primary">Pilih Ikon Emoji <span className="text-red-500">*</span></label>
                     <div className="flex gap-2">
-                      <input 
-                        type="hidden" 
-                        name="icon" 
+                      <input
+                        type="hidden"
+                        name="icon"
                         value={icon}
                       />
                       <button
@@ -162,11 +162,11 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
                       >
                         {icon || '😀'}
                       </button>
-                      <input 
+                      <input
                         readOnly
-                        placeholder="Klik tombol emoji 👉" 
+                        placeholder="Klik tombol emoji 👉"
                         value={icon ? `Emoji terpilih: ${icon}` : ''}
-                        className="w-full bg-surface/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none cursor-default shadow-sm" 
+                        className="w-full bg-surface/50 border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none cursor-default shadow-sm"
                       />
                     </div>
                     {showEmojiPicker && (
@@ -178,25 +178,25 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
 
                   <div className="space-y-2 md:col-span-2">
                     <label className="text-sm font-semibold text-text-primary">Deskripsi Singkat <span className="text-red-500">*</span></label>
-                    <input 
-                      name="description" 
-                      required={isNewCategory} 
+                    <input
+                      name="description"
+                      required={isNewCategory}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Contoh: Ahli instalasi dan perbaikan korsleting listrik" 
-                      className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm" 
+                      placeholder="Contoh: Ahli instalasi dan perbaikan korsleting listrik"
+                      className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
                     />
                   </div>
                 </div>
               )}
-              
+
               {!isNewCategory && selectedCategoryId !== '' && (
                 <div className="p-4 border border-border bg-surface rounded-xl">
                   {/* Keep these as hidden inputs so FormData still passes them correctly to action */}
                   <input type="hidden" name="categoryName" value={categoryName} />
                   <input type="hidden" name="icon" value={icon} />
                   <input type="hidden" name="description" value={description} />
-                  
+
                   <div className="flex gap-4 items-center">
                     <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-3xl">
                       {icon}
@@ -235,8 +235,8 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isPending || selectedCategoryId === ''}
             className="w-full bg-gradient-to-r from-gradient-start to-gradient-end hover:shadow-lg hover:shadow-primary/30 text-white font-bold py-4 px-6 rounded-xl disabled:opacity-70 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center text-lg mt-6"
           >
