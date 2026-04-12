@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
+import { exec } from 'child_process'
+import { promisify } from 'util'
+
+const execAsync = promisify(exec)
 
 const ALLOWED_FILES = ['site.json', 'services.json', 'testimonials.json', 'cta.json', 'footer.json']
 
@@ -45,6 +49,16 @@ export async function POST(request: NextRequest) {
 
     const filePath = path.join(process.cwd(), 'data', file)
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8')
+
+    if (process.env.NODE_ENV !== 'development') {
+      try {
+        await execAsync(`git add data/${file}`)
+        await execAsync(`git commit -m "CMS Update: ${file}"`)
+        await execAsync(`git push origin master`).catch(() => console.log('Notice: Push failed or no origin master. Local commit succeeded.'))
+      } catch (gitErr) {
+        console.error('Git auto-commit process failed/skipped:', gitErr)
+      }
+    }
 
     return NextResponse.json({ success: true, file, message: `${file} saved successfully` })
   } catch {

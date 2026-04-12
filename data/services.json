@@ -126,5 +126,18 @@
         "address": "Jl. KH. Mansyur No. 5, Mayangan"
       }
     ]
+  },
+  {
+    "id": "tukang-ayam",
+    "category": "Tukang Ayam",
+    "icon": "🐔",
+    "description": "Jualan Ayam Delivery",
+    "contacts": [
+      {
+        "name": "Pak Ridho",
+        "phone": "08123512351233",
+        "address": "Tidak ada"
+      }
+    ]
   }
 ]

@@ -35,8 +35,6 @@ export default function Home() {
         heading={cta.heading}
         description={cta.description}
         buttonText={cta.buttonText}
-        whatsappNumber={cta.whatsappNumber}
-        whatsappMessage={cta.whatsappMessage}
       />
     </>
   )

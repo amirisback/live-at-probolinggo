@@ -84,17 +84,10 @@ export default function HeroSection({
         >
           <a
             href="#layanan"
-            className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-gradient-start to-gradient-end text-white font-semibold text-base
-                       shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
-          >
-            Jelajahi Layanan
-          </a>
-          <a
-            href="#kontak"
             className="px-8 py-3.5 rounded-xl bg-white/10 border border-white/25 text-white font-semibold text-base
                        backdrop-blur-sm hover:bg-white/20 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0"
           >
-            Daftar Sekarang
+            Jelajahi Layanan
           </a>
         </div>
       </div>
