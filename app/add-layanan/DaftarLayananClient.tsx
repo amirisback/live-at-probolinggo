@@ -192,7 +192,7 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
                     </div>
                     {showEmojiPicker && (
                       <div className="absolute z-50 top-full mt-2 left-0 sm:right-0 shadow-xl rounded-xl custom-emoji-picker">
-                        <EmojiPicker onEmojiClick={handleEmojiClick} theme="auto" />
+                        <EmojiPicker onEmojiClick={handleEmojiClick} theme={"auto" as any} />
                       </div>
                     )}
                   </div>
