@@ -5,10 +5,18 @@ import { useRouter } from 'next/navigation'
 
 const FILES = ['site.json', 'services.json', 'testimonials.json', 'cta.json', 'footer.json']
 
+const TAB_LABELS: Record<string, { icon: string; label: string }> = {
+  'site.json': { icon: '📱', label: 'Info Website' },
+  'services.json': { icon: '🛠️', label: 'Layanan' },
+  'testimonials.json': { icon: '💬', label: 'Testimoni' },
+  'cta.json': { icon: '📞', label: 'Call to Action' },
+  'footer.json': { icon: '🔽', label: 'Footer' },
+}
+
 export default function AdminPage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('site.json')
-  const [data, setData] = useState<{ [key: string]: any }>({})
+  const [data, setData] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState({ text: '', type: '' })
@@ -32,7 +40,7 @@ export default function AdminPage() {
 
       // Fetch data CMS
       try {
-        const fetchedData: any = {}
+        const fetchedData: Record<string, any> = {}
         for (const file of FILES) {
           const res = await fetch(`/api/cms?file=${file}`)
           if (res.ok) {
@@ -90,22 +98,22 @@ export default function AdminPage() {
   }
 
   const parseCSVLine = (text: string, sep: string) => {
-    let inQuotes = false;
-    let word = '';
-    let row = [];
+    let inQuotes = false
+    let word = ''
+    const row: string[] = []
     for (let i = 0; i < text.length; i++) {
-      const char = text[i];
+      const char = text[i]
       if (char === '"') {
-        inQuotes = !inQuotes;
+        inQuotes = !inQuotes
       } else if (char === sep && !inQuotes) {
-        row.push(word.trim());
-        word = '';
+        row.push(word.trim())
+        word = ''
       } else {
-        word += char;
+        word += char
       }
     }
-    row.push(word.trim());
-    return row;
+    row.push(word.trim())
+    return row
   }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,12 +122,9 @@ export default function AdminPage() {
     const reader = new FileReader()
     reader.onload = (event) => {
       const text = event.target?.result as string
-      if (text) {
-        parseCSVAndMerge(text)
-      }
+      if (text) parseCSVAndMerge(text)
     }
     reader.readAsText(file)
-    // reset input
     e.target.value = ''
   }
 
@@ -129,49 +134,46 @@ export default function AdminPage() {
       setMessage({ text: 'CSV kosong atau tidak valid', type: 'error' })
       return
     }
-    
+
     let sep = ','
     if (lines[0].includes(';')) sep = ';'
-    
-    const currentData = Array.isArray(data['services.json']) ? [...data['services.json']] : []
 
-    let addedCount = 0;
+    const currentData = Array.isArray(data['services.json']) ? [...data['services.json']] : []
+    let addedCount = 0
 
     for (let i = 1; i < lines.length; i++) {
       const row = parseCSVLine(lines[i], sep)
-      if (row.length < 4) continue // Invalid line
-      
+      if (row.length < 4) continue
+
       const cat = row[0].replace(/^"|"$/g, '')
       const icon = row[1]?.replace(/^"|"$/g, '') || '✨'
       const desc = row[2]?.replace(/^"|"$/g, '') || 'Layanan warga'
       const name = row[3]?.replace(/^"|"$/g, '')
       const phone = row[4]?.replace(/^"|"$/g, '') || ''
       const address = row[5]?.replace(/^"|"$/g, '') || 'Tidak ada alamat / tidak tahu'
-      
-      if (!cat || !name) continue 
 
-      let catIndex = currentData.findIndex(c => c.category.toLowerCase() === cat.toLowerCase())
+      if (!cat || !name) continue
+
+      let catIndex = currentData.findIndex((c: any) => c.category.toLowerCase() === cat.toLowerCase())
       if (catIndex === -1) {
         const newId = cat.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-        currentData.push({
-          id: newId,
-          category: cat,
-          icon: icon,
-          description: desc,
-          contacts: []
-        })
+        currentData.push({ id: newId, category: cat, icon, description: desc, contacts: [] })
         catIndex = currentData.length - 1
       }
-      
+
       const exists = currentData[catIndex].contacts.find((c: any) => c.name === name && c.phone === phone)
       if (!exists) {
         currentData[catIndex].contacts.push({ name, phone, address })
-        addedCount++;
+        addedCount++
       }
     }
 
     setData(prev => ({ ...prev, 'services.json': currentData }))
-    setMessage({ text: `Berhasil menggabungkan ${addedCount} data baru dari CSV! Periksa JSON lalu Simpan.`, type: 'success' })
+    setMessage({ text: `Berhasil menggabungkan ${addedCount} data baru dari CSV! Periksa lalu Simpan.`, type: 'success' })
+  }
+
+  const updateData = (fileName: string, newVal: any) => {
+    setData(prev => ({ ...prev, [fileName]: newVal }))
   }
 
   if (loading) {
@@ -186,6 +188,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-8">
       <div className="max-w-5xl mx-auto bg-surface shadow-soft-lg rounded-2xl p-6 border border-border">
+        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
@@ -217,6 +220,7 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* Message */}
         {message.text && (
           <div className={`p-4 mb-6 rounded-xl font-medium animate-fade-in ${message.type === 'success' ? 'bg-green-500/10 text-emerald-600 dark:text-emerald-400 border border-green-500/20' : 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20'}`}>
             <span className="mr-2">{message.type === 'success' ? '✅' : '❌'}</span>
@@ -236,20 +240,16 @@ export default function AdminPage() {
                   : 'border-transparent text-text-secondary hover:text-text-primary hover:bg-surface-hover rounded-t-lg'
               }`}
             >
-              {file === 'site.json' && '📱 Info Website'}
-              {file === 'services.json' && '🛠️ Layanan'}
-              {file === 'testimonials.json' && '💬 Testimoni'}
-              {file === 'cta.json' && '📞 Call to Action'}
-              {file === 'footer.json' && '🔽 Footer'}
+              {TAB_LABELS[file]?.icon} {TAB_LABELS[file]?.label}
             </button>
           ))}
         </div>
 
-        {/* Editor Area */}
-        <div className="space-y-4 animate-fade-in" key={activeTab}>
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
+        {/* Toolbar */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <div className="flex items-center gap-2">
             <p className="text-sm text-text-secondary bg-background/50 px-3 py-1.5 rounded-md border border-border inline-block">
-              Mengedit file: <strong className="font-mono text-primary">{activeTab}</strong>
+              Mengedit: <strong className="font-mono text-primary">{TAB_LABELS[activeTab]?.label}</strong>
             </p>
             
             {activeTab === 'services.json' && (
@@ -296,6 +296,59 @@ export default function AdminPage() {
               {saving ? 'Menyimpan Data...' : 'Simpan Perubahan'}
             </button>
           </div>
+
+          {activeTab === 'services.json' && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={downloadTemplate}
+                className="text-sm px-4 py-2 border border-border text-text-secondary bg-surface hover:bg-surface-hover rounded-xl flex items-center gap-2 transition-all shadow-sm"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Template CSV
+              </button>
+              <label className="text-sm px-4 py-2 bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-500 border border-green-500/20 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm font-bold">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Import CSV
+                <input type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />
+              </label>
+            </div>
+          )}
+        </div>
+
+        {/* Editor Area */}
+        <div className="animate-fade-in" key={`${activeTab}-${viewMode}`}>
+          {viewMode === 'form' ? (
+            <FormEditor
+              activeTab={activeTab}
+              data={data[activeTab]}
+              onChange={(newVal) => updateData(activeTab, newVal)}
+            />
+          ) : (
+            <JsonEditor
+              initialValue={data[activeTab]}
+              onSave={(newVal) => updateData(activeTab, newVal)}
+            />
+          )}
+        </div>
+
+        {/* Save Button */}
+        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-border gap-4">
+          <p className="text-xs text-text-tertiary">
+            {viewMode === 'json'
+              ? '* Pastikan format JSON sudah benar sebelum menekan tombol simpan.'
+              : '* Perubahan akan disimpan ke file JSON saat menekan tombol simpan.'}
+          </p>
+          <button
+            onClick={() => handleSave(activeTab)}
+            disabled={saving}
+            className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-gradient-start to-gradient-end text-white rounded-xl hover:opacity-95 disabled:opacity-50 font-bold shadow-lg shadow-primary/25 transition-all outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background"
+          >
+            {saving ? 'Menyimpan Data...' : 'Simpan Perubahan'}
+          </button>
         </div>
       </div>
     </div>
@@ -336,12 +389,12 @@ function JsonEditor({ initialValue, onSave }: { file?: string, initialValue: any
       <textarea
         value={localStr}
         onChange={handleChange}
-        className="w-full min-h-[500px] font-mono text-sm leading-relaxed p-5 bg-[#0d1117] dark:bg-[#0d1117] text-[#c9d1d9] border border-border/80 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none transition-all resize-y custom-scrollbar shadow-inner"
+        className="w-full min-h-[500px] font-mono text-sm leading-relaxed p-5 bg-[#0d1117] text-[#c9d1d9] border border-border/80 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none transition-all resize-y custom-scrollbar shadow-inner"
         spellCheck="false"
       />
       {error && (
-        <div className="absolute top-4 right-4 px-4 py-2 bg-red-500/95 text-white text-sm font-medium rounded-lg shadow-lg border border-red-400 backdrop-blur-sm animate-pulse-subtle">
-          ⚠️ Format Tidak Valid: {error}
+        <div className="absolute top-4 right-4 px-4 py-2 bg-red-500/95 text-white text-sm font-medium rounded-lg shadow-lg border border-red-400 backdrop-blur-sm">
+          Format Tidak Valid: {error}
         </div>
       )}
     </div>
