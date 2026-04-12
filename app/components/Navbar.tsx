@@ -44,7 +44,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo */}
-          <a href="#home" className="flex items-center gap-2 group">
+          <a href={pathname === '/' ? '#home' : '/#home'} className="flex items-center gap-2 group">
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-gradient-start to-gradient-end flex items-center justify-center text-white font-bold text-sm transition-transform group-hover:scale-110">
               LP
             </div>
@@ -57,17 +57,20 @@ export default function Navbar() {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
+            {navLinks.map((link) => {
+              const currentHref = pathname === '/' ? link.href : `/${link.href}`
+              return (
               <a
                 key={link.href}
-                href={link.href}
+                href={currentHref}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-primary/10 hover:text-primary ${
                   scrolled ? 'text-text-secondary' : 'text-white/80 hover:text-white'
                 }`}
               >
                 {link.label}
               </a>
-            ))}
+              )
+            })}
             <div className="ml-2 flex items-center gap-2">
               <a
                 href="https://github.com/amirisback/live-at-probolinggo"
@@ -139,16 +142,19 @@ export default function Navbar() {
           }`}
         >
           <div className="p-6 pt-20 flex flex-col gap-2">
-            {navLinks.map((link) => (
+            {navLinks.map((link) => {
+              const currentHref = pathname === '/' ? link.href : `/${link.href}`
+              return (
               <a
                 key={link.href}
-                href={link.href}
+                href={currentHref}
                 onClick={() => setMobileOpen(false)}
                 className="px-4 py-3 rounded-xl text-text-primary font-medium hover:bg-primary/10 hover:text-primary transition-all duration-200"
               >
                 {link.label}
               </a>
-            ))}
+              )
+            })}
             <div className="border-t border-border my-2"></div>
             <a
               href="https://github.com/amirisback/live-at-probolinggo"
