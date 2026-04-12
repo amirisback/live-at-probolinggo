@@ -6,6 +6,7 @@ interface ServiceCardProps {
 
 export default function ServiceCard({ name, phone, address }: ServiceCardProps) {
   const waLink = `https://wa.me/62${phone.replace(/^0/, '')}?text=${encodeURIComponent(`Halo ${name}, saya menemukan kontak Anda di Live At Probolinggo.`)}`
+  const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
 
   return (
     <div className="group flex items-start gap-4 p-4 rounded-xl bg-background border border-border hover:border-primary/30 hover:shadow-soft transition-all duration-300">
@@ -26,6 +27,20 @@ export default function ServiceCard({ name, phone, address }: ServiceCardProps) 
 
       {/* Action buttons */}
       <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Maps */}
+        <a
+          href={mapsLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Lokasi ${name}`}
+          className="w-9 h-9 rounded-lg bg-red-500/10 flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition-all duration-200"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </a>
+
         {/* Call */}
         <a
           href={`tel:${phone}`}

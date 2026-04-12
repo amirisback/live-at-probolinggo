@@ -25,7 +25,13 @@
     "category": "Tukang Ledeng",
     "icon": "🔧",
     "description": "Perbaikan dan instalasi saluran air",
-    "contacts": []
+    "contacts": [
+      {
+        "name": "PUJI Sumur Bor Air Tanah",
+        "phone": "0852-3283-3925",
+        "address": "Gg. IV No.129, Kebonsari Kulon, Kec. Kanigaran, Kota Probolinggo, Jawa Timur 67214"
+      }
+    ]
   },
   {
     "id": "jasa-kebersihan",
