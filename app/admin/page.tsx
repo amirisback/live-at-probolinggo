@@ -2,6 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import SiteEditor from './components/SiteEditor'
+import ServicesEditor from './components/ServicesEditor'
+import TestimonialsEditor from './components/TestimonialsEditor'
+import CTAEditor from './components/CTAEditor'
+import FooterEditor from './components/FooterEditor'
 
 const FILES = ['site.json', 'services.json', 'testimonials.json', 'cta.json', 'footer.json']
 
@@ -21,6 +26,7 @@ export default function AdminPage() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState({ text: '', type: '' })
   const [adminNama, setAdminNama] = useState('')
+  const [viewMode, setViewMode] = useState<'form' | 'json'>('form')
 
   useEffect(() => {
     const checkAuthAndFetch = async () => {
@@ -251,50 +257,21 @@ export default function AdminPage() {
             <p className="text-sm text-text-secondary bg-background/50 px-3 py-1.5 rounded-md border border-border inline-block">
               Mengedit: <strong className="font-mono text-primary">{TAB_LABELS[activeTab]?.label}</strong>
             </p>
-            
-            {activeTab === 'services.json' && (
-              <div className="flex flex-wrap gap-2">
-                <button
-                  title="Unduh contoh CSV agar tidak salah format"
-                  onClick={downloadTemplate}
-                  className="text-sm px-4 py-2 border border-border text-text-secondary bg-surface hover:bg-surface-hover rounded-xl flex items-center gap-2 transition-all shadow-sm"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                  </svg>
-                  Template CSV
-                </button>
-                <label className="text-sm px-4 py-2 bg-green-500/10 hover:bg-green-500/20 text-green-600 dark:text-green-500 border border-green-500/20 rounded-xl flex items-center gap-2 cursor-pointer transition-all shadow-sm font-bold">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                  </svg>
-                  Import CSV Formatted
-                  <input type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />
-                </label>
-              </div>
-            )}
-          </div>
-          
-          <JsonEditor
-            key={activeTab}
-            file={activeTab}
-            initialValue={data[activeTab]}
-            onSave={(newVal) => {
-               setData(prev => ({ ...prev, [activeTab]: newVal }))
-            }}
-          />
-          
-          <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-border gap-4">
-            <p className="text-xs text-text-tertiary">
-              * Pastikan format JSON sudah benar (tidak ada pesan error merah) sebelum menekan tombol simpan.
-            </p>
-            <button
-              onClick={() => handleSave(activeTab)}
-              disabled={saving}
-              className="w-full sm:w-auto px-8 py-3 bg-gradient-to-r from-gradient-start to-gradient-end text-white rounded-xl hover:opacity-95 disabled:opacity-50 font-bold shadow-lg shadow-primary/25 transition-all outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:-translate-y-0"
-            >
-              {saving ? 'Menyimpan Data...' : 'Simpan Perubahan'}
-            </button>
+            {/* Toggle Form/JSON */}
+            <div className="flex bg-background border border-border rounded-lg overflow-hidden">
+              <button
+                onClick={() => setViewMode('form')}
+                className={`px-3 py-1.5 text-xs font-medium transition-colors ${viewMode === 'form' ? 'bg-primary text-white' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                Form
+              </button>
+              <button
+                onClick={() => setViewMode('json')}
+                className={`px-3 py-1.5 text-xs font-medium transition-colors ${viewMode === 'json' ? 'bg-primary text-white' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                JSON
+              </button>
+            </div>
           </div>
 
           {activeTab === 'services.json' && (
@@ -355,15 +332,36 @@ export default function AdminPage() {
   )
 }
 
-function JsonEditor({ initialValue, onSave }: { file?: string, initialValue: any, onSave: (val: any) => void }) {
-  const [localStr, setLocalStr] = useState('')
+/* Form Editor - renders specific form UI based on active tab */
+function FormEditor({ activeTab, data, onChange }: { activeTab: string; data: any; onChange: (val: any) => void }) {
+  if (!data) {
+    return <p className="text-center text-text-tertiary py-8">Data belum tersedia untuk tab ini.</p>
+  }
+
+  switch (activeTab) {
+    case 'site.json':
+      return <SiteEditor data={data} onChange={onChange} />
+    case 'services.json':
+      return <ServicesEditor data={data} onChange={onChange} />
+    case 'testimonials.json':
+      return <TestimonialsEditor data={data} onChange={onChange} />
+    case 'cta.json':
+      return <CTAEditor data={data} onChange={onChange} />
+    case 'footer.json':
+      return <FooterEditor data={data} onChange={onChange} />
+    default:
+      return <p className="text-center text-text-tertiary py-8">Editor belum tersedia untuk tab ini.</p>
+  }
+}
+
+/* JSON Editor - raw JSON textarea as fallback */
+function JsonEditor({ initialValue, onSave }: { initialValue: any; onSave: (val: any) => void }) {
+  const [localStr, setLocalStr] = useState(() => JSON.stringify(initialValue, null, 2))
   const [error, setError] = useState('')
-  const lastSavedRef = useRef<string>('')
+  const lastSavedRef = useRef<string>(JSON.stringify(initialValue, null, 2))
 
   useEffect(() => {
     const str = JSON.stringify(initialValue, null, 2)
-    // Hanya reset jika perubahan berasal dari luar (misal CSV import),
-    // bukan dari feedback onSave kita sendiri
     if (str !== lastSavedRef.current) {
       setLocalStr(str)
       setError('')
