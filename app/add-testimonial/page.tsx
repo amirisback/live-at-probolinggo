@@ -61,22 +61,21 @@ export default function AddTestimonial() {
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-12 px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-      <Link href="/#testimoni" className="self-start md:absolute md:top-24 md:left-8 flex items-center gap-2 text-text-secondary hover:text-primary transition-colors text-sm font-medium mb-6">
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Kembali
-      </Link>
-      
       <div className="w-full max-w-2xl bg-surface border border-border shadow-soft-lg rounded-2xl p-6 sm:p-10 relative overflow-hidden">
         {/* Decor */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-start/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
         
-        <div className="text-center mb-8 relative z-10">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-bold uppercase tracking-widest mb-4">
+        <div className="mb-8 border-b border-border pb-6 relative z-10 text-center">
+          <Link href="/#testimoni" className="inline-flex items-center text-sm font-medium text-primary hover:text-primary-hover mb-6 transition-colors self-start w-full justify-center sm:justify-start">
+            <svg className="w-4 h-4 mr-2 text-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Kembali ke Beranda
+          </Link>
+          <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-bold uppercase tracking-widest mb-4 mx-auto">
             Testimoni Baru
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-text-primary">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground">
             Bagikan <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-amber-600">Cerita Anda</span>
           </h1>
           <p className="mt-3 text-text-secondary text-sm sm:text-base">

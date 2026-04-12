@@ -27,6 +27,7 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
   const [categoryName, setCategoryName] = useState('')
   const [icon, setIcon] = useState('')
   const [description, setDescription] = useState('')
+  const [address, setAddress] = useState('')
 
   // Emoji picker state
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
@@ -65,6 +66,8 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
     // If we're updating an existing category, we want to make sure the submitted variables mirror our state
     // Just in case existing fields are disabled or we want to force them. 
     // The server action just looks at formData. We'll append hidden info or let inputs handle it.
+    // Also, handle the address state since we controlled it
+    formData.set('address', address)
 
     setErrorVisible(false)
     startTransition(async () => {
@@ -74,6 +77,24 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
         setErrorVisible(true)
       }
     })
+  }
+
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      // Optional: you can show a loading state here if needed
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setAddress(`https://maps.google.com/?q=${lat},${lng}`);
+        },
+        (error) => {
+          alert('Gagal mendapatkan lokasi. Pastikan izin lokasi diaktifkan.');
+        }
+      );
+    } else {
+      alert('Browser Anda tidak mendukung fitur lokasi.');
+    }
   }
 
   const handleEmojiClick = (emojiData: any) => {
@@ -91,7 +112,7 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
 
       <div className="w-full max-w-3xl z-10 glass rounded-3xl p-6 sm:p-10 shadow-soft-lg border border-glass-border">
         <div className="mb-8 border-b border-border pb-6">
-          <Link href="/" className="inline-flex items-center text-sm font-medium text-primary hover:text-primary-hover mb-6 transition-colors">
+          <Link href="/#kontak" className="inline-flex items-center text-sm font-medium text-primary hover:text-primary-hover mb-6 transition-colors">
             <svg className="w-4 h-4 mr-2 text-current" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
@@ -230,7 +251,35 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-text-primary">Alamat Operasional <span className="text-red-500">*</span></label>
-                <textarea name="address" required rows={3} placeholder="Contoh: Jl. Pahlawan Karya No. 12, Panggung, Probolinggo" className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm resize-none"></textarea>
+                <textarea 
+                  name="address" 
+                  required 
+                  rows={3} 
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Contoh: Jl. Pahlawan Karya No. 12, Panggung, Probolinggo" 
+                  className="w-full bg-surface border border-border rounded-xl px-4 py-3 text-foreground placeholder-text-tertiary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm resize-none"
+                ></textarea>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => setAddress('Tidak ada alamat / tidak tahu')}
+                    className="text-xs px-3 py-1.5 bg-surface border border-border hover:bg-surface-hover rounded-lg text-text-secondary transition-colors"
+                  >
+                    Tidak ada alamat / tidak tahu
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGetLocation}
+                    className="text-xs px-3 py-1.5 bg-primary/10 border border-primary/20 hover:bg-primary/20 text-primary rounded-lg transition-colors flex items-center gap-1"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Get Location sekarang
+                  </button>
+                </div>
               </div>
             </div>
           </div>
