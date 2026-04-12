@@ -1,18 +1,36 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 
 const FILES = ['site.json', 'services.json', 'testimonials.json', 'cta.json', 'footer.json']
 
 export default function AdminPage() {
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState('site.json')
   const [data, setData] = useState<{ [key: string]: any }>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState({ text: '', type: '' })
+  const [adminNama, setAdminNama] = useState('')
 
   useEffect(() => {
-    const fetchAllData = async () => {
+    const checkAuthAndFetch = async () => {
+      // Cek autentikasi
+      try {
+        const authRes = await fetch('/api/auth/check')
+        if (!authRes.ok) {
+          router.push('/login')
+          return
+        }
+        const authData = await authRes.json()
+        setAdminNama(authData.nama)
+      } catch {
+        router.push('/login')
+        return
+      }
+
+      // Fetch data CMS
       try {
         const fetchedData: any = {}
         for (const file of FILES) {
@@ -29,8 +47,13 @@ export default function AdminPage() {
         setLoading(false)
       }
     }
-    fetchAllData()
-  }, [])
+    checkAuthAndFetch()
+  }, [router])
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push('/login')
+  }
 
   const handleSave = async (fileName: string) => {
     setSaving(true)
@@ -164,16 +187,34 @@ export default function AdminPage() {
     <div className="min-h-screen bg-background text-foreground p-4 sm:p-8">
       <div className="max-w-5xl mx-auto bg-surface shadow-soft-lg rounded-2xl p-6 border border-border">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
-            <span className="p-2 bg-primary/10 text-primary rounded-lg text-xl sm:text-2xl">⚙️</span> 
-            Dashboard Admin
-          </h1>
-          <a href="/" target="_blank" className="px-5 py-2.5 bg-background border border-border rounded-xl hover:bg-border/50 text-text-primary font-medium transition-all text-sm flex items-center gap-2 shadow-sm">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-            Lihat Website
-          </a>
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-3">
+              <span className="p-2 bg-primary/10 text-primary rounded-lg text-xl sm:text-2xl">⚙️</span>
+              Dashboard Admin
+            </h1>
+            {adminNama && (
+              <p className="text-sm text-text-secondary mt-1 ml-14">
+                Halo, <strong className="text-text-primary">{adminNama}</strong>
+              </p>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <a href="/" target="_blank" className="px-5 py-2.5 bg-background border border-border rounded-xl hover:bg-border/50 text-text-primary font-medium transition-all text-sm flex items-center gap-2 shadow-sm">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              Lihat Website
+            </a>
+            <button
+              onClick={handleLogout}
+              className="px-5 py-2.5 bg-red-500/10 border border-red-500/20 rounded-xl hover:bg-red-500/20 text-red-600 dark:text-red-400 font-medium transition-all text-sm flex items-center gap-2 shadow-sm"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+              </svg>
+              Logout
+            </button>
+          </div>
         </div>
 
         {message.text && (
@@ -234,12 +275,13 @@ export default function AdminPage() {
             )}
           </div>
           
-          <JsonEditor 
-            file={activeTab} 
-            initialValue={data[activeTab]} 
+          <JsonEditor
+            key={activeTab}
+            file={activeTab}
+            initialValue={data[activeTab]}
             onSave={(newVal) => {
                setData(prev => ({ ...prev, [activeTab]: newVal }))
-            }} 
+            }}
           />
           
           <div className="flex flex-col sm:flex-row justify-between items-center mt-6 pt-4 border-t border-border gap-4">
@@ -260,13 +302,20 @@ export default function AdminPage() {
   )
 }
 
-function JsonEditor({ file, initialValue, onSave }: { file: string, initialValue: any, onSave: (val: any) => void }) {
+function JsonEditor({ initialValue, onSave }: { file?: string, initialValue: any, onSave: (val: any) => void }) {
   const [localStr, setLocalStr] = useState('')
   const [error, setError] = useState('')
+  const lastSavedRef = useRef<string>('')
 
   useEffect(() => {
-    setLocalStr(JSON.stringify(initialValue, null, 2))
-    setError('')
+    const str = JSON.stringify(initialValue, null, 2)
+    // Hanya reset jika perubahan berasal dari luar (misal CSV import),
+    // bukan dari feedback onSave kita sendiri
+    if (str !== lastSavedRef.current) {
+      setLocalStr(str)
+      setError('')
+      lastSavedRef.current = str
+    }
   }, [initialValue])
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -275,6 +324,7 @@ function JsonEditor({ file, initialValue, onSave }: { file: string, initialValue
     try {
       const parsed = JSON.parse(val)
       setError('')
+      lastSavedRef.current = JSON.stringify(parsed, null, 2)
       onSave(parsed)
     } catch (err: any) {
       setError(err.message)
