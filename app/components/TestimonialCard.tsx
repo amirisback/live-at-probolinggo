@@ -6,9 +6,10 @@ interface TestimonialCardProps {
   photo: string
   content: string
   rating: number
+  serviceUsed?: string
 }
 
-export default function TestimonialCard({ name, role, photo, content, rating }: TestimonialCardProps) {
+export default function TestimonialCard({ name, role, photo, content, rating, serviceUsed }: TestimonialCardProps) {
   return (
     <div className="flex-shrink-0 w-80 sm:w-96 p-6 rounded-2xl bg-surface border border-border shadow-soft hover:shadow-soft-lg transition-all duration-300 group">
       {/* Stars */}
@@ -30,7 +31,7 @@ export default function TestimonialCard({ name, role, photo, content, rating }: 
         &ldquo;{content}&rdquo;
       </p>
 
-      {/* Author */}
+      {/* Author and Service */}
       <div className="flex items-center gap-3">
         <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300">
           <Image
@@ -42,8 +43,18 @@ export default function TestimonialCard({ name, role, photo, content, rating }: 
           />
         </div>
         <div>
-          <p className="font-semibold text-text-primary text-sm">{name}</p>
-          <p className="text-xs text-text-tertiary">{role}</p>
+          <p className="font-semibold text-text-primary text-sm line-clamp-1">{name}</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
+            <span className="text-xs text-text-tertiary line-clamp-1">{role}</span>
+            {serviceUsed && (
+              <>
+                <span className="hidden sm:inline text-border">•</span>
+                <span className="text-xs font-medium text-primary mt-1 sm:mt-0 max-w-[120px] truncate" title={serviceUsed}>
+                  {serviceUsed}
+                </span>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

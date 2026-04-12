@@ -1,13 +1,18 @@
 {
   "description": "Portal layanan warga Probolinggo. Menghubungkan Anda dengan penyedia jasa terpercaya dari tetangga sendiri.",
+  "apologyText": "Mohon maaf bila fitur dan antarmuka web ini masih jauh dari sempurna. Semua masukan untuk perbaikan sangat kami nantikan.",
   "address": "📍 Probolinggo, Jawa Timur",
-  "email": "📧 info@liveatprobolinggo.id",
-  "phone": "📱 +62 812-3456-7890",
+  "email": "📧 amirisback.dev@gmail.com",
+  "phone": "📱 +6281357108568",
   "socialUrls": {
-    "instagram": "https://instagram.com",
-    "facebook": "https://facebook.com",
-    "youtube": "https://youtube.com"
+    "instagram": "https://www.instagram.com/faisalamircs/",
+    "facebook": "https://www.facebook.com/faisalamircs/",
+    "github": "https://github.com/amirisback"
   },
   "bottomText": "Live At Probolinggo. Dari Warga Untuk Warga.",
-  "madeWithText": "Dibuat dengan ❤️ di Probolinggo"
+  "madeWithText": "Dibuat dengan ❤️ di Probolinggo",
+  "adminWa": {
+    "Donny": "6282144361582",
+    "Amir": "6281357108568"
+  }
 }
