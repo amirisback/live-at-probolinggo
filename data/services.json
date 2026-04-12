@@ -50,89 +50,34 @@
     "category": "Terapis Pijat",
     "icon": "💆",
     "description": "Pijat tradisional dan refleksi profesional",
-    "contacts": [
-      {
-        "name": "Bu Siti Aminah",
-        "phone": "081234567021",
-        "address": "Jl. Hayam Wuruk No. 7, Mayangan"
-      },
-      {
-        "name": "Pak Hasan Basri",
-        "phone": "081234567022",
-        "address": "Jl. Ikan Tongkol No. 3, Mayangan"
-      },
-      {
-        "name": "Bu Rina Wati",
-        "phone": "081234567023",
-        "address": "Jl. Brantas No. 18, Kanigaran"
-      }
-    ]
+    "contacts": []
   },
   {
     "id": "tukang-ledeng",
     "category": "Tukang Ledeng",
     "icon": "🔧",
     "description": "Perbaikan dan instalasi saluran air",
-    "contacts": [
-      {
-        "name": "Pak Puji",
-        "phone": "0812312512341",
-        "address": "JL. Cokro"
-      }
-    ]
+    "contacts": []
   },
   {
     "id": "jasa-kebersihan",
     "category": "Jasa Kebersihan",
     "icon": "🧹",
     "description": "Layanan kebersihan rumah dan kantor",
-    "contacts": [
-      {
-        "name": "Bu Lestari",
-        "phone": "081234567041",
-        "address": "Jl. Gatot Subroto No. 9, Kedopok"
-      },
-      {
-        "name": "Pak Andi Firmansyah",
-        "phone": "081234567042",
-        "address": "Jl. Diponegoro No. 27, Kanigaran"
-      }
-    ]
+    "contacts": []
   },
   {
     "id": "bengkel-motor",
     "category": "Bengkel Motor",
     "icon": "🏍️",
     "description": "Service dan perbaikan sepeda motor",
-    "contacts": [
-      {
-        "name": "Pak Roni Irawan",
-        "phone": "081234567051",
-        "address": "Jl. Panglima Sudirman No. 77, Wonoasih"
-      },
-      {
-        "name": "Pak Fajar Nugroho",
-        "phone": "081234567052",
-        "address": "Jl. Soekarno Hatta No. 33, Kedopok"
-      },
-      {
-        "name": "Pak Rizal Pratama",
-        "phone": "081234567053",
-        "address": "Jl. KH. Mansyur No. 5, Mayangan"
-      }
-    ]
+    "contacts": []
   },
   {
     "id": "tukang-ayam",
     "category": "Tukang Ayam",
     "icon": "🐔",
     "description": "Jualan Ayam Delivery",
-    "contacts": [
-      {
-        "name": "Pak Ridho",
-        "phone": "08123512351233",
-        "address": "Tidak ada"
-      }
-    ]
+    "contacts": []
   }
 ]

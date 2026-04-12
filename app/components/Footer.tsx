@@ -9,6 +9,7 @@ export default function Footer({ data }: { data?: any }) {
   // Default values if data somehow isn't passed
   const d = data || {
     description: "Portal layanan warga Probolinggo. Menghubungkan Anda dengan penyedia jasa terpercaya dari tetangga sendiri.",
+    apologyText: "Mohon maaf bila fitur dan antarmuka web ini masih jauh dari sempurna. Semua masukan untuk perbaikan sangat kami nantikan.",
     address: "📍 Probolinggo, Jawa Timur",
     email: "📧 info@liveatprobolinggo.id",
     phone: "📱 +62 812-3456-7890",
@@ -49,6 +50,11 @@ export default function Footer({ data }: { data?: any }) {
             <p className="text-text-secondary text-sm leading-relaxed max-w-xs">
               {d.description}
             </p>
+            {d.apologyText && (
+              <p className="text-text-tertiary text-xs italic leading-relaxed max-w-xs mt-3 opacity-80 decoration-dotted underline-offset-2">
+                * {d.apologyText}
+              </p>
+            )}
           </div>
 
           {/* Quick links */}
