@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -11,6 +11,18 @@ export default function AddTestimonial() {
   const [error, setError] = useState('')
   const [rating, setRating] = useState(5)
   const [file, setFile] = useState<File | null>(null)
+  const [services, setServices] = useState<{ id: string, category: string, icon: string }[]>([])
+
+  useEffect(() => {
+    fetch('/api/cms?file=services.json')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setServices(data)
+        }
+      })
+      .catch(err => console.error('Failed to fetch services:', err))
+  }, [])
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -118,6 +130,22 @@ export default function AddTestimonial() {
                   className="w-full bg-background border border-border text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-transparent transition-all placeholder:text-text-tertiary"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="serviceUsed" className="block text-sm font-semibold text-text-primary">
+                Layanan yang Digunakan <span className="text-text-tertiary font-normal">(Opsional)</span>
+              </label>
+              <select
+                id="serviceUsed"
+                name="serviceUsed"
+                className="w-full bg-background border border-border text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-transparent transition-all appearance-none"
+              >
+                <option value="">-- Pilih Layanan yang Membantu Anda --</option>
+                {services.map(s => (
+                  <option key={s.id} value={s.category}>{s.icon} {s.category}</option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-2">

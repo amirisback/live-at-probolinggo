@@ -11,6 +11,7 @@ interface Testimonial {
   photo: string
   content: string
   rating: number
+  serviceUsed?: string
 }
 
 interface TestimonialSectionProps {
@@ -72,8 +73,8 @@ export default function TestimonialSection({ testimonials }: TestimonialSectionP
           className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          {/* Duplicate testimonials for seamless loop */}
-          {[...testimonials, ...testimonials].map((t, i) => (
+          {/* Duplicate testimonials for seamless loop only if there are enough items */}
+          {(testimonials.length >= 4 ? [...testimonials, ...testimonials] : testimonials).map((t, i) => (
             <TestimonialCard key={`${t.id}-${i}`} {...t} />
           ))}
         </div>

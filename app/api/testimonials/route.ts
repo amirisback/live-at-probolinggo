@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
     const role = formData.get('role') as string
     const rating = formData.get('rating') as string
     const content = formData.get('content') as string
+    const serviceUsed = formData.get('serviceUsed') as string
     const photoFile = formData.get('photo') as File | null
 
     if (!name || !role || !rating || !content) {
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
       photo: photoUrl,
       content,
       rating: parseInt(rating),
+      serviceUsed: serviceUsed || undefined,
     }
 
     testimonials.unshift(newTestimonial) // Add newest to the top!
