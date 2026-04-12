@@ -12,7 +12,6 @@ export default function Footer({ data }: { data?: any }) {
     apologyText: "Mohon maaf bila fitur dan antarmuka web ini masih jauh dari sempurna. Semua masukan untuk perbaikan sangat kami nantikan.",
     address: "📍 Probolinggo, Jawa Timur",
     email: "📧 info@liveatprobolinggo.id",
-    phone: "📱 +62 812-3456-7890",
     socialUrls: { instagram: "#", facebook: "#", github: "#" },
     bottomText: "Live At Probolinggo. Dari Warga Untuk Warga.",
     madeWithText: "Dibuat dengan ❤️ di Probolinggo",

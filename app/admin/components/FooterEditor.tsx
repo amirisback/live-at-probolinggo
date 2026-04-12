@@ -5,7 +5,6 @@ interface FooterData {
   apologyText: string
   address: string
   email: string
-  phone: string
   socialUrls: {
     instagram: string
     facebook: string
@@ -73,7 +72,7 @@ export default function FooterEditor({ data, onChange }: FooterEditorProps) {
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-medium text-text-primary mb-1.5">Alamat</label>
           <input
@@ -89,15 +88,6 @@ export default function FooterEditor({ data, onChange }: FooterEditorProps) {
             type="text"
             value={data.email || ''}
             onChange={(e) => update('email', e.target.value)}
-            className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-text-primary text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-text-primary mb-1.5">Telepon</label>
-          <input
-            type="text"
-            value={data.phone || ''}
-            onChange={(e) => update('phone', e.target.value)}
             className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-text-primary text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
           />
         </div>
