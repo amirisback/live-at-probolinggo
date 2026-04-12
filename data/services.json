@@ -4,46 +4,14 @@
     "category": "Tukang Bangunan",
     "icon": "🏗️",
     "description": "Jasa konstruksi dan renovasi rumah",
-    "contacts": [
-      {
-        "name": "Pak Ahmad Suryadi",
-        "phone": "081234567001",
-        "address": "Jl. Suroyo No. 12, Kanigaran"
-      },
-      {
-        "name": "Pak Budi Hartono",
-        "phone": "081234567002",
-        "address": "Jl. Cokroaminoto No. 45, Mayangan"
-      },
-      {
-        "name": "Pak Dedi Setiawan",
-        "phone": "081234567003",
-        "address": "Jl. KH. Hasan Genggong No. 8, Kedopok"
-      }
-    ]
+    "contacts": []
   },
   {
     "id": "pengangkut-air",
     "category": "Pengangkut Air",
     "icon": "💧",
     "description": "Layanan pengiriman air bersih ke rumah Anda",
-    "contacts": [
-      {
-        "name": "Pak Slamet Riyadi",
-        "phone": "081234567011",
-        "address": "Jl. Panglima Sudirman No. 22, Wonoasih"
-      },
-      {
-        "name": "Pak Wahyu Prasetyo",
-        "phone": "081234567012",
-        "address": "Jl. Dr. Moch Saleh No. 15, Kanigaran"
-      },
-      {
-        "name": "Pak Joko Widodo",
-        "phone": "081234567013",
-        "address": "Jl. Mastrip No. 30, Kedopok"
-      }
-    ]
+    "contacts": []
   },
   {
     "id": "terapis-pijat",
