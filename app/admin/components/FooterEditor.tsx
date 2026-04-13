@@ -41,7 +41,14 @@ export default function FooterEditor({ data, onChange }: FooterEditorProps) {
   }
 
   const addAdminWa = () => {
-    onChange({ ...data, adminWa: { ...data.adminWa, 'Nama Baru': '62' } })
+    let key = 'Nama Baru'
+    let counter = 1
+    const existing = data.adminWa || {}
+    while (existing[key]) {
+      key = `Nama Baru ${counter}`
+      counter++
+    }
+    onChange({ ...data, adminWa: { ...existing, [key]: '62' } })
   }
 
   const deleteAdminWa = (key: string) => {

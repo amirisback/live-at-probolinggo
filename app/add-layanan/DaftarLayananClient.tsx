@@ -4,6 +4,7 @@ import { useTransition, useState, useEffect, useRef } from 'react'
 import { addServiceAction } from './action'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { isRedirectError } from 'next/dist/client/components/redirect-error'
 
 const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false })
 
@@ -74,6 +75,9 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
       try {
         await addServiceAction(formData)
       } catch (err) {
+        if (isRedirectError(err)) {
+          throw err
+        }
         setErrorVisible(true)
       }
     })
@@ -211,13 +215,17 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
                 </div>
               )}
 
-              {!isNewCategory && selectedCategoryId !== '' && (
-                <div className="p-4 border border-border bg-surface rounded-xl">
-                  {/* Keep these as hidden inputs so FormData still passes them correctly to action */}
+              {/* Always render hidden inputs so FormData always has these values */}
+              {!isNewCategory && (
+                <>
                   <input type="hidden" name="categoryName" value={categoryName} />
                   <input type="hidden" name="icon" value={icon} />
                   <input type="hidden" name="description" value={description} />
+                </>
+              )}
 
+              {!isNewCategory && selectedCategoryId !== '' && (
+                <div className="p-4 border border-border bg-surface rounded-xl">
                   <div className="flex gap-4 items-center">
                     <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-3xl">
                       {icon}

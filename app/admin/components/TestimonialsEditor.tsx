@@ -1,10 +1,14 @@
 'use client'
 
 interface Testimonial {
+  id?: string
   name: string
   role: string
-  text: string
+  photo?: string
+  content: string
   rating: number
+  serviceUsed?: string
+  [key: string]: any // preserve any extra fields
 }
 
 interface TestimonialsEditorProps {
@@ -16,7 +20,7 @@ export default function TestimonialsEditor({ data, onChange }: TestimonialsEdito
   const testimonials = Array.isArray(data) ? data : []
 
   const addTestimonial = () => {
-    onChange([...testimonials, { name: '', role: '', text: '', rating: 5 }])
+    onChange([...testimonials, { id: Date.now().toString(), name: '', role: '', content: '', rating: 5 }])
   }
 
   const updateTestimonial = (idx: number, field: keyof Testimonial, value: string | number) => {
@@ -43,9 +47,17 @@ export default function TestimonialsEditor({ data, onChange }: TestimonialsEdito
       )}
 
       {testimonials.map((item, idx) => (
-        <div key={idx} className="rounded-xl border border-border bg-surface p-4 space-y-3">
+        <div key={item.id || idx} className="rounded-xl border border-border bg-surface p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-text-primary">Testimoni #{idx + 1}</span>
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-semibold text-text-primary">Testimoni #{idx + 1}</span>
+              {item.photo && (
+                <span className="text-xs text-text-tertiary bg-background px-2 py-0.5 rounded-md border border-border">📷 Ada foto</span>
+              )}
+              {item.serviceUsed && (
+                <span className="text-xs text-text-tertiary bg-background px-2 py-0.5 rounded-md border border-border">🛠️ {item.serviceUsed}</span>
+              )}
+            </div>
             <button
               onClick={() => deleteTestimonial(idx)}
               className="px-3 py-1 text-red-500 text-xs font-medium hover:bg-red-500/10 rounded-lg transition-colors"
@@ -59,7 +71,7 @@ export default function TestimonialsEditor({ data, onChange }: TestimonialsEdito
               <label className="block text-xs font-medium text-text-secondary mb-1">Nama</label>
               <input
                 type="text"
-                value={item.name}
+                value={item.name || ''}
                 onChange={(e) => updateTestimonial(idx, 'name', e.target.value)}
                 placeholder="Nama pemberi testimoni"
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
@@ -69,7 +81,7 @@ export default function TestimonialsEditor({ data, onChange }: TestimonialsEdito
               <label className="block text-xs font-medium text-text-secondary mb-1">Peran / Keterangan</label>
               <input
                 type="text"
-                value={item.role}
+                value={item.role || ''}
                 onChange={(e) => updateTestimonial(idx, 'role', e.target.value)}
                 placeholder="Contoh: Warga Mayangan"
                 className="w-full px-3 py-2 bg-background border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
@@ -80,8 +92,8 @@ export default function TestimonialsEditor({ data, onChange }: TestimonialsEdito
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1">Isi Testimoni</label>
             <textarea
-              value={item.text}
-              onChange={(e) => updateTestimonial(idx, 'text', e.target.value)}
+              value={item.content || ''}
+              onChange={(e) => updateTestimonial(idx, 'content', e.target.value)}
               rows={2}
               placeholder="Tulis testimoni di sini..."
               className="w-full px-3 py-2 bg-background border border-border rounded-lg text-text-primary text-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-y"
@@ -90,14 +102,15 @@ export default function TestimonialsEditor({ data, onChange }: TestimonialsEdito
 
           <div>
             <label className="block text-xs font-medium text-text-secondary mb-1">
-              Rating: <span className="text-primary font-bold">{'★'.repeat(item.rating)}{'☆'.repeat(5 - item.rating)}</span>
+              Rating: <span className="text-primary font-bold">{'★'.repeat(item.rating || 0)}{'☆'.repeat(5 - (item.rating || 0))}</span>
             </label>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
+                  type="button"
                   onClick={() => updateTestimonial(idx, 'rating', star)}
-                  className={`text-xl transition-colors ${star <= item.rating ? 'text-yellow-400' : 'text-border hover:text-yellow-300'}`}
+                  className={`text-xl transition-colors ${star <= (item.rating || 0) ? 'text-yellow-400' : 'text-border hover:text-yellow-300'}`}
                 >
                   ★
                 </button>

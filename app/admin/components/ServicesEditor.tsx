@@ -37,15 +37,16 @@ export default function ServicesEditor({ data, onChange }: ServicesEditorProps) 
   }
 
   const addCategory = () => {
+    const uniqueId = `kategori-baru-${Date.now()}`
     const newCat: ServiceCategory = {
-      id: 'kategori-baru',
+      id: uniqueId,
       category: 'Kategori Baru',
       icon: '✨',
       description: 'Deskripsi kategori',
       contacts: [],
     }
     onChange([...categories, newCat])
-    setExpandedCat('kategori-baru')
+    setExpandedCat(uniqueId)
   }
 
   const deleteCategory = (idx: number) => {

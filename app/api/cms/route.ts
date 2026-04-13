@@ -30,6 +30,21 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const session = request.cookies.get('admin_session')
+    if (!session?.value) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    try {
+      const decoded = JSON.parse(Buffer.from(session.value, 'base64').toString())
+      const maxAge = 60 * 60 * 24 * 1000
+      if (Date.now() - decoded.createdAt > maxAge) {
+        return NextResponse.json({ error: 'Session expired' }, { status: 401 })
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 })
+    }
+
     const body = await request.json()
     const { file, data } = body
 

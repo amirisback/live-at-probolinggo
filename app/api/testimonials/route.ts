@@ -49,14 +49,19 @@ export async function POST(request: NextRequest) {
       testimonials = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
     }
 
-    const newTestimonial = {
+    const parsedRating = parseInt(rating)
+
+    const newTestimonial: Record<string, any> = {
       id: Date.now().toString(),
       name,
       role,
       photo: photoUrl,
       content,
-      rating: parseInt(rating),
-      serviceUsed: serviceUsed || undefined,
+      rating: isNaN(parsedRating) ? 5 : parsedRating,
+    }
+
+    if (serviceUsed) {
+      newTestimonial.serviceUsed = serviceUsed
     }
 
     testimonials.unshift(newTestimonial) // Add newest to the top!

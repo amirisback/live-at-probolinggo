@@ -5,7 +5,8 @@ interface ServiceCardProps {
 }
 
 export default function ServiceCard({ name, phone, address }: ServiceCardProps) {
-  const waLink = `https://wa.me/62${phone.replace(/^0/, '')}?text=${encodeURIComponent(`Halo ${name}, saya menemukan kontak Anda di Live At Probolinggo.`)}`
+  const cleanPhone = phone.replace(/[^0-9]/g, '').replace(/^0/, '')
+  const waLink = `https://wa.me/62${cleanPhone}?text=${encodeURIComponent(`Halo ${name}, saya menemukan kontak Anda di Live At Probolinggo.`)}`
   const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`
 
   return (

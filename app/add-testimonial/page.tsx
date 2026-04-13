@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
 export default function AddTestimonial() {
   const router = useRouter()
@@ -12,6 +14,7 @@ export default function AddTestimonial() {
   const [rating, setRating] = useState(5)
   const [file, setFile] = useState<File | null>(null)
   const [services, setServices] = useState<{ id: string, category: string, icon: string }[]>([])
+  const submittingRef = useRef(false)
 
   useEffect(() => {
     fetch('/api/cms?file=services.json')
@@ -24,8 +27,25 @@ export default function AddTestimonial() {
       .catch(err => console.error('Failed to fetch services:', err))
   }, [])
   
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files?.[0] || null
+    if (selected && selected.size > MAX_FILE_SIZE) {
+      setError('Ukuran foto terlalu besar. Maksimal 5MB.')
+      e.target.value = ''
+      setFile(null)
+      return
+    }
+    setError('')
+    setFile(selected)
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+
+    // Prevent double-submit
+    if (submittingRef.current) return
+    submittingRef.current = true
+
     setLoading(true)
     setError('')
     
@@ -40,8 +60,14 @@ export default function AddTestimonial() {
         method: 'POST',
         body: formData,
       })
-      
-      const data = await res.json()
+
+      // Handle non-JSON responses gracefully
+      let data: any
+      try {
+        data = await res.json()
+      } catch {
+        throw new Error('Server mengembalikan respons yang tidak valid. Silakan coba lagi.')
+      }
       
       if (!res.ok) {
         throw new Error(data.error || 'Gagal mengirim testimoni')
@@ -53,9 +79,10 @@ export default function AddTestimonial() {
       }, 3000)
       
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || 'Terjadi kesalahan yang tidak diketahui.')
     } finally {
       setLoading(false)
+      submittingRef.current = false
     }
   }
 
@@ -157,7 +184,7 @@ export default function AddTestimonial() {
                     type="file"
                     id="photo"
                     accept="image/*"
-                    onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    onChange={handleFileChange}
                     className="w-full bg-background border border-border text-text-secondary rounded-xl px-4 py-2.5 file:mr-4 file:py-1 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition-all cursor-pointer outline-none"
                   />
                 </div>
