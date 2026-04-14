@@ -69,21 +69,18 @@ export async function POST(request: NextRequest) {
     // Save JSON
     fs.writeFileSync(jsonPath, JSON.stringify(testimonials, null, 2), 'utf-8')
 
-    // Run Auto Git Commit (Fire process) only in production
-    if (process.env.NODE_ENV !== 'development') {
-      try {
-        // Add all changes from testimonials component, new pictures and testimonials
-        await execAsync(`git add data/testimonials.json public/images/testimonials/`)
-        await execAsync(`git commit -m "Auto add testimonial: ${name}"`)
+    try {
+      await execAsync(`git config user.name "Live At Probolinggo Bot"`).catch(() => {})
+      await execAsync(`git config user.email "bot@liveatprobolinggo.com"`).catch(() => {})
+      // Add all changes from testimonials component, new pictures and testimonials
+      await execAsync(`git add data/testimonials.json public/images/testimonials/`)
+      await execAsync(`git commit -m "Auto add testimonial: ${name}"`)
 
-        // Try to push in case there's an upstream master branch
-        await execAsync(`git push origin master`).catch(() => console.log('Notice: Push failed or no origin master. Local commit succeeded.'))
-      } catch (gitErr) {
-        console.error('Git auto-commit process failed/skipped:', gitErr)
-        // Not throwing error to user since local save was successful
-      }
-    } else {
-      console.log('Skipping auto git commit since running in development mode.')
+      // Try to push in case there's an upstream master branch
+      await execAsync(`git push origin master`).catch(() => console.log('Notice: Push failed or no origin master. Local commit succeeded.'))
+    } catch (gitErr) {
+      console.error('Git auto-commit process failed/skipped:', gitErr)
+      // Not throwing error to user since local save was successful
     }
 
     return NextResponse.json({ success: true, testimonial: newTestimonial })

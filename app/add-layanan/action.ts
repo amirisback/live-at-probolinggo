@@ -38,6 +38,9 @@ export async function addServiceAction(formData: FormData) {
 
   if (existingCategoryIndex >= 0) {
     // Kategori sudah ada, tambahkan kontak ke dalam array contacts
+    if (!services[existingCategoryIndex].contacts) {
+      services[existingCategoryIndex].contacts = []
+    }
     services[existingCategoryIndex].contacts.push(newContact)
   } else {
     // Buat kategori baru
@@ -52,14 +55,14 @@ export async function addServiceAction(formData: FormData) {
 
   fs.writeFileSync(filePath, JSON.stringify(services, null, 2))
 
-  if (process.env.NODE_ENV !== 'development') {
-    try {
-      await execAsync(`git add data/services.json`)
-      await execAsync(`git commit -m "Auto add service: ${providerName} in ${categoryName}"`)
-      await execAsync(`git push origin master`).catch(() => console.log('Notice: Push failed or no origin master. Local commit succeeded.'))
-    } catch (gitErr) {
-      console.error('Git auto-commit process failed/skipped:', gitErr)
-    }
+  try {
+    await execAsync(`git config user.name "Live At Probolinggo Bot"`).catch(() => {})
+    await execAsync(`git config user.email "bot@liveatprobolinggo.com"`).catch(() => {})
+    await execAsync(`git add data/services.json`)
+    await execAsync(`git commit -m "Auto add service: ${providerName} in ${categoryName}"`)
+    await execAsync(`git push origin master`).catch(() => console.log('Notice: Push failed or no origin master. Local commit succeeded.'))
+  } catch (gitErr) {
+    console.error('Git auto-commit process failed/skipped:', gitErr)
   }
 
   revalidatePath('/')
