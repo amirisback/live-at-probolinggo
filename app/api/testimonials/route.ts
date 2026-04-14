@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import fs from 'fs'
 import path from 'path'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
+import { getSupabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,17 +39,11 @@ export async function POST(request: NextRequest) {
       photoUrl = `/images/testimonials/placeholder.png`
     }
 
-    // Read current testimonials
-    const jsonPath = path.join(process.cwd(), 'data', 'testimonials.json')
-    let testimonials = []
-    if (fs.existsSync(jsonPath)) {
-      testimonials = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
-    }
-
     const parsedRating = parseInt(rating)
 
+    const supabase = getSupabase()
+
     const newTestimonial: Record<string, any> = {
-      id: Date.now().toString(),
       name,
       role,
       photo: photoUrl,
@@ -61,29 +52,32 @@ export async function POST(request: NextRequest) {
     }
 
     if (serviceUsed) {
-      newTestimonial.serviceUsed = serviceUsed
+      newTestimonial.service_used = serviceUsed
     }
 
-    testimonials.unshift(newTestimonial) // Add newest to the top!
+    const { data: inserted, error } = await supabase
+      .from('testimonials')
+      .insert(newTestimonial)
+      .select()
+      .single()
 
-    // Save JSON
-    fs.writeFileSync(jsonPath, JSON.stringify(testimonials, null, 2), 'utf-8')
-
-    try {
-      await execAsync(`git config user.name "Live At Probolinggo Bot"`).catch(() => {})
-      await execAsync(`git config user.email "bot@liveatprobolinggo.com"`).catch(() => {})
-      // Add all changes from testimonials component, new pictures and testimonials
-      await execAsync(`git add data/testimonials.json public/images/testimonials/`)
-      await execAsync(`git commit -m "Auto add testimonial: ${name}"`)
-
-      // Try to push in case there's an upstream master branch
-      await execAsync(`git push origin master`).catch(() => console.log('Notice: Push failed or no origin master. Local commit succeeded.'))
-    } catch (gitErr) {
-      console.error('Git auto-commit process failed/skipped:', gitErr)
-      // Not throwing error to user since local save was successful
+    if (error) {
+      console.error('Supabase insert error:', error)
+      return NextResponse.json({ error: 'Gagal menyimpan testimoni: ' + error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true, testimonial: newTestimonial })
+    // Map back to the format the frontend expects
+    const responseTestimonial = {
+      id: inserted.id.toString(),
+      name: inserted.name,
+      role: inserted.role,
+      photo: inserted.photo,
+      content: inserted.content,
+      rating: inserted.rating,
+      ...(inserted.service_used && { serviceUsed: inserted.service_used }),
+    }
+
+    return NextResponse.json({ success: true, testimonial: responseTestimonial })
 
   } catch (err: any) {
     console.error('Testimonial API Error:', err)
