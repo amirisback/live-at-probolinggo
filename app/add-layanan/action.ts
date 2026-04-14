@@ -2,17 +2,12 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import fs from 'fs'
-import path from 'path'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
+import { getSupabase } from '@/lib/supabase'
 
 export async function addServiceAction(formData: FormData) {
   const categoryName = formData.get('categoryName') as string
   const description = formData.get('description') as string
-  const icon = (formData.get('icon') as string) || '💼' // Default icon if empty
+  const icon = (formData.get('icon') as string) || '💼'
   const providerName = formData.get('providerName') as string
   const phone = formData.get('phone') as string
   const address = formData.get('address') as string
@@ -21,48 +16,42 @@ export async function addServiceAction(formData: FormData) {
     throw new Error('Semua bidang wajib diisi')
   }
 
-  const filePath = path.join(process.cwd(), 'data', 'services.json')
-  const content = fs.readFileSync(filePath, 'utf-8')
-  const services = JSON.parse(content)
+  const supabase = getSupabase()
 
   // Generate ID based on category name
   const categoryId = categoryName.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-')
 
-  const existingCategoryIndex = services.findIndex((s: any) => s.id === categoryId)
+  // Upsert category (create if not exists, ignore if already exists)
+  const { error: catError } = await supabase
+    .from('service_categories')
+    .upsert(
+      {
+        id: categoryId,
+        category: categoryName,
+        icon,
+        description,
+      },
+      { onConflict: 'id', ignoreDuplicates: true }
+    )
 
-  const newContact = {
-    name: providerName,
-    phone,
-    address
+  if (catError) {
+    console.error('Error upserting category:', catError)
+    throw new Error('Gagal menyimpan kategori layanan: ' + catError.message)
   }
 
-  if (existingCategoryIndex >= 0) {
-    // Kategori sudah ada, tambahkan kontak ke dalam array contacts
-    if (!services[existingCategoryIndex].contacts) {
-      services[existingCategoryIndex].contacts = []
-    }
-    services[existingCategoryIndex].contacts.push(newContact)
-  } else {
-    // Buat kategori baru
-    services.push({
-      id: categoryId,
-      category: categoryName,
-      icon,
-      description,
-      contacts: [newContact]
+  // Insert contact
+  const { error: contactError } = await supabase
+    .from('service_contacts')
+    .insert({
+      category_id: categoryId,
+      name: providerName,
+      phone,
+      address,
     })
-  }
 
-  fs.writeFileSync(filePath, JSON.stringify(services, null, 2))
-
-  try {
-    await execAsync(`git config user.name "Live At Probolinggo Bot"`).catch(() => {})
-    await execAsync(`git config user.email "bot@liveatprobolinggo.com"`).catch(() => {})
-    await execAsync(`git add data/services.json`)
-    await execAsync(`git commit -m "Auto add service: ${providerName} in ${categoryName}"`)
-    await execAsync(`git push origin master`).catch(() => console.log('Notice: Push failed or no origin master. Local commit succeeded.'))
-  } catch (gitErr) {
-    console.error('Git auto-commit process failed/skipped:', gitErr)
+  if (contactError) {
+    console.error('Error inserting contact:', contactError)
+    throw new Error('Gagal menyimpan kontak penyedia jasa: ' + contactError.message)
   }
 
   revalidatePath('/')

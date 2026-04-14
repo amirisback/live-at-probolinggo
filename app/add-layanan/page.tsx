@@ -1,18 +1,22 @@
-import fs from 'fs'
-import path from 'path'
+import { getSupabase } from '@/lib/supabase'
 import DaftarLayananClient from './DaftarLayananClient'
 
-export default function DaftarLayananPage() {
-  const filePath = path.join(process.cwd(), 'data', 'services.json')
-  const content = fs.readFileSync(filePath, 'utf-8')
-  const services = JSON.parse(content)
-  
-  const categories = services.map((s: any) => ({
+export const dynamic = 'force-dynamic'
+
+export default async function DaftarLayananPage() {
+  const supabase = getSupabase()
+
+  const { data: categories } = await supabase
+    .from('service_categories')
+    .select('id, category, icon, description')
+    .order('created_at', { ascending: true })
+
+  const mappedCategories = (categories || []).map((s: any) => ({
     id: s.id,
     name: s.category,
     icon: s.icon,
     description: s.description
   }))
 
-  return <DaftarLayananClient existingCategories={categories} />
+  return <DaftarLayananClient existingCategories={mappedCategories} />
 }
