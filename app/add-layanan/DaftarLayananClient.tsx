@@ -22,6 +22,7 @@ interface Props {
 export default function DaftarLayananClient({ existingCategories }: Props) {
   const [isPending, startTransition] = useTransition()
   const [errorVisible, setErrorVisible] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('Terdapat kesalahan pada saat mendaftarkan layanan. Pastikan semua bidang terisi dengan benar.')
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>('')
 
   // Fields state to handle auto-fill and new category mode
@@ -78,6 +79,7 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
         if (isRedirectError(err)) {
           throw err
         }
+        setErrorMessage(err instanceof Error ? err.message : 'Terjadi kesalahan sistem yang tidak diketahui.')
         setErrorVisible(true)
       }
     })
@@ -130,7 +132,7 @@ export default function DaftarLayananClient({ existingCategories }: Props) {
 
         {errorVisible && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 rounded-xl text-red-600 dark:text-red-400 text-sm">
-            Terdapat kesalahan pada saat mendaftarkan layanan. Pastikan semua bidang terisi dengan benar.
+            {errorMessage}
           </div>
         )}
 

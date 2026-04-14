@@ -12,12 +12,12 @@ const execAsync = promisify(exec)
 export async function addServiceAction(formData: FormData) {
   const categoryName = formData.get('categoryName') as string
   const description = formData.get('description') as string
-  const icon = formData.get('icon') as string
+  const icon = (formData.get('icon') as string) || '💼' // Default icon if empty
   const providerName = formData.get('providerName') as string
   const phone = formData.get('phone') as string
   const address = formData.get('address') as string
 
-  if (!categoryName || !description || !icon || !providerName || !phone || !address) {
+  if (!categoryName || !description || !providerName || !phone || !address) {
     throw new Error('Semua bidang wajib diisi')
   }
 
